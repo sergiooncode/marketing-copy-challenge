@@ -1,0 +1,36 @@
+# Dev environment for the vacation-rental content generation challenge.
+#
+#   mise run setup   build .venv and install dependencies (first time / from scratch)
+#   mise run lab     start JupyterLab
+#   mise run stop    shut the server down
+#   mise run ps      show which Jupyter servers are running
+
+[tools]
+python = "3.12"
+uv = "latest"
+
+[env]
+# Puts .venv/bin on PATH automatically when you cd into this directory,
+# so `jupyter`, `python`, `pip` all resolve to the project venv.
+_.python.venv = { path = ".venv", create = true }
+
+[tasks.setup]
+description = "Create .venv, install dependencies, register the Jupyter kernel"
+run = """
+uv venv --python 3.12
+uv pip install jupyterlab notebook ipykernel anthropic python-dotenv pandas pydantic
+.venv/bin/python -m ipykernel install --user \
+  --name lodgify-challenge --display-name "Python 3.12 (lodgify)"
+"""
+
+[tasks.lab]
+description = "Start JupyterLab on port 8888"
+run = ".venv/bin/jupyter lab --port 8888"
+
+[tasks.stop]
+description = "Shut down the JupyterLab server on port 8888"
+run = ".venv/bin/jupyter server stop 8888"
+
+[tasks.ps]
+description = "List running Jupyter servers and their tokens"
+run = ".venv/bin/jupyter server list"
